@@ -1,0 +1,34 @@
+https://api.myapp.com/api/users
+
+https:// -> protocol
+Tells the browser/client how to communicate with the server.
+http:// → unencrypted
+https:// → encrypted using TLS/SSL
+
+api.myapp.com -> host/domain
+This identifies which server/service to connect to.
+
+It can be broken down further:
+api.myapp.com
+│   │      │
+│   │      └── TLD (com)
+│   └───────── Domain (myapp)
+└───────────── Subdomain (api)
+
+/api -> api prefix
+A path used to indicate that you're accessing the application's API.
+
+users -> endpoint/resource
+Specifies what you want from the backend.
+
+Complete meaning
+https://api.myapp.com/api/users
+│       │             │   │
+│       │             │   └── Give me the users resource
+│       │             └────── API path
+│       └──────────────────── Backend server
+└──────────────────────────── Communicate securely
+
+if (typeof window === "undefined") return "dark";
+Checks whether window exists.
+This matters for SSR (Server-Side Rendering) because the server doesn't have window.
