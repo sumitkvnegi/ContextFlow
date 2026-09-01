@@ -4,9 +4,7 @@ import { embeddings, qdrantClient, COLLECTION_NAME } from "../config/qdrant.js";
 import { RAG_CONSTANTS } from "../config/constants.js";
 import logger from "../config/logger.js";
 
-/**
- * Derive a human-friendly document title (first non-empty line).
- */
+// Derive a human-friendly document title (first non-empty line).
 function extractDocTitle(content) {
   const firstLine = content
     .split("\n")
@@ -15,10 +13,8 @@ function extractDocTitle(content) {
   return firstLine ? firstLine.replace(/^#+\s*/, "").slice(0, 200) : "Untitled";
 }
 
-/**
- * Split text into sections keyed by their nearest markdown heading so a
- * section's context stays attached to its content.
- */
+// Split text into sections keyed by their nearest markdown heading so a
+// section's context stays attached to its content.
 function splitIntoSections(content) {
   const lines = content.split("\n");
   const sections = [];
@@ -47,9 +43,7 @@ function splitIntoSections(content) {
     : [{ heading: "Overview", text: content }];
 }
 
-/**
- * Split a document into heading-aware chunks and enrich metadata.
- */
+// Split a document into heading-aware chunks and enrich metadata.
 export async function chunkDocument(document) {
   const splitter = new RecursiveCharacterTextSplitter({
     chunkSize: RAG_CONSTANTS.CHUNK_SIZE,
@@ -84,12 +78,6 @@ export async function chunkDocument(document) {
   return allChunks;
 }
 
-/**
- * Chunk, embed, and store one or more documents into Qdrant.
- *
- * @param {Array<{title, content, metadata}>} documents
- * @returns {Promise<{success, documentsProcessed, chunksCreated}>}
- */
 export async function ingestDocuments(documents) {
   const allChunks = [];
   for (const doc of documents) {
@@ -115,12 +103,6 @@ export async function ingestDocuments(documents) {
   };
 }
 
-/**
- * Delete all vectors belonging to a given source document from Qdrant so it
- * no longer participates in retrieval.
- *
- * @param {string} source - the document filename stored in metadata.source
- */
 export async function deleteBySource(source) {
   await qdrantClient.delete(COLLECTION_NAME, {
     filter: {

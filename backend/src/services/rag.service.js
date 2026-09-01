@@ -16,9 +16,6 @@ import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import logger from "../config/logger.js";
 
-/**
- * Format retrieved documents into an LLM-friendly context block.
- */
 function formatDocuments(picked) {
   return picked
     .map((item, index) => {
@@ -35,9 +32,6 @@ function formatDocuments(picked) {
  *   - strip echoed "Excerpt N — from <file>:" scaffolding and triple-quote fences
  *   - drop the "not enough information" fallback line when the model ALSO
  *     produced a real answer alongside it (summaries often trigger this)
- *
- * @param {string} text
- * @returns {string}
  */
 function sanitizeAnswer(text) {
   if (!text) return text;
@@ -58,16 +52,8 @@ function sanitizeAnswer(text) {
   return out.trim();
 }
 
-// Keep only the most recent turns so the prompt stays small and fast.
 const MAX_HISTORY_TURNS = 6;
 
-/**
- * Convert a plain history array into LangChain chat messages (real user /
- * assistant turns), keeping only the most recent turns.
- *
- * @param {Array<{role:string, content:string}>} history
- * @returns {import("@langchain/core/messages").BaseMessage[]}
- */
 function toChatMessages(history) {
   if (!Array.isArray(history) || history.length === 0) return [];
   return history
@@ -80,10 +66,6 @@ function toChatMessages(history) {
     );
 }
 
-/**
- * Build a Qdrant metadata filter that restricts retrieval to the given
- * document sources (filenames). Returns undefined when no filter is needed.
- */
 function buildSourceFilter(sources) {
   if (!Array.isArray(sources) || sources.length === 0) return undefined;
   return {
@@ -103,9 +85,6 @@ function buildSourceFilter(sources) {
  * single chunk scores highly. Specific factual questions do NOT count — they
  * must still clear the normal similarity threshold so out-of-scope questions
  * return "not enough information" instead of hallucinated answers.
- *
- * @param {string} question
- * @returns {boolean}
  */
 function isBroadQuery(question) {
   const q = (question || "").toLowerCase().trim();
@@ -115,12 +94,7 @@ function isBroadQuery(question) {
   return BROAD_PATTERNS.test(q);
 }
 
-/**
- * Retrieve and re-rank the most relevant chunks for a question.
- *
- * @param {string} question
- * @param {string[]} [sources] - Restrict retrieval to these document filenames.
- */
+// Retrieve and re-rank the most relevant chunks for a question.
 export async function retrieveContext(question, sources) {
   const vectorStore = await getVectorStore();
   const queryVector = await embeddings.embedQuery(question);
@@ -165,13 +139,6 @@ export async function retrieveContext(question, sources) {
   return { picked, contextText };
 }
 
-/**
- * Answer a question using RAG (retrieval → grounded generation).
- *
- * @param {string} question
- * @param {string[]} [sources] - Restrict retrieval to these document filenames.
- * @param {Array<{role:string, content:string}>} [history] - Recent conversation.
- */
 export async function queryRAG(question, sources, history) {
   logger.info({ question, sources }, "RAG query");
 
@@ -213,13 +180,6 @@ export async function queryRAG(question, sources, history) {
   };
 }
 
-/**
- * Answer a question with the LLM directly, WITHOUT retrieval. Used for the
- * "generic AI" mode when the user hasn't started a document-scoped session.
- *
- * @param {string} question
- * @param {Array<{role:string, content:string}>} [history] - Recent conversation.
- */
 export async function queryGeneric(question, history) {
   logger.info({ question }, "Generic (non-RAG) query");
 

@@ -4,14 +4,6 @@ import { randomUUID } from "crypto";
 import { UPLOAD_CONSTANTS } from "../config/constants.js";
 import logger from "../config/logger.js";
 
-/**
- * Lightweight JSON-file backed registry of uploaded documents.
- *
- * Each record tracks enough metadata to (a) render the sidebar list and
- * (b) filter RAG retrieval by document(s). Records survive server restarts,
- * mirroring the vectors that live in Qdrant.
- */
-
 const REGISTRY_PATH = path.join(
   UPLOAD_CONSTANTS.DOCUMENTS_DIR,
   "registry.json",
@@ -39,9 +31,6 @@ async function persist() {
   await fs.writeFile(REGISTRY_PATH, JSON.stringify(cache, null, 2), "utf-8");
 }
 
-/**
- * Return all documents, newest first.
- */
 export async function listDocuments() {
   const docs = await load();
   return [...docs].sort(
@@ -49,18 +38,12 @@ export async function listDocuments() {
   );
 }
 
-/**
- * Find a single document by id.
- */
 export async function getDocument(id) {
   const docs = await load();
   return docs.find((d) => d.id === id) || null;
 }
 
-/**
- * Find a document by its source filename (case-insensitive). Used to prevent
- * uploading the same document twice.
- */
+// Find a document by its source filename (case-insensitive). Used to prevent uploading the same document twice.
 export async function findBySource(source) {
   if (!source) return null;
   const docs = await load();
@@ -68,10 +51,6 @@ export async function findBySource(source) {
   return docs.find((d) => (d.source || "").toLowerCase() === needle) || null;
 }
 
-/**
- * Add a document record.
- * @returns {Promise<object>} the stored record
- */
 export async function addDocument(record) {
   const docs = await load();
   const entry = {
@@ -86,9 +65,6 @@ export async function addDocument(record) {
   return entry;
 }
 
-/**
- * Remove a document record by id. Returns the removed record (or null).
- */
 export async function removeDocument(id) {
   const docs = await load();
   const idx = docs.findIndex((d) => d.id === id);

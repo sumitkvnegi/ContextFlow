@@ -6,9 +6,6 @@ import { ingestDocuments } from "./ingestion.service.js";
 import { UPLOAD_CONSTANTS } from "../config/constants.js";
 import logger from "../config/logger.js";
 
-/**
- * Classify an uploaded file into one of: "pdf", "text", "media".
- */
 function classifyFile(mimetype, ext) {
   if (mimetype === "application/pdf" || ext === ".pdf") return "pdf";
   if (mimetype?.startsWith("text/") || [".txt", ".md"].includes(ext))
@@ -18,14 +15,6 @@ function classifyFile(mimetype, ext) {
   return "unknown";
 }
 
-/**
- * Process an uploaded file end-to-end:
- *   1. Extract text (PDF/TXT/MD) or transcribe (audio/video)
- *   2. Chunk + embed + store in Qdrant
- *
- * @param {{buffer:Buffer, originalname:string, mimetype:string}} file
- * @returns {Promise<{title, source, type, contentLength, chunksCreated, transcript?}>}
- */
 export async function processUpload(file) {
   const { buffer, originalname, mimetype } = file;
   const ext = path.extname(originalname).toLowerCase();

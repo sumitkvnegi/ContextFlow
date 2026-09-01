@@ -1,12 +1,6 @@
 import { PDFParse } from "pdf-parse";
 import logger from "../config/logger.js";
 
-/**
- * Extract text from a raw PDF Buffer (an uploaded file).
- * @param {Buffer} pdfBuffer
- * @param {string} [label] - A name used for logging & title fallback.
- * @returns {Promise<{title, content, metadata}>}
- */
 export async function extractPDFFromBuffer(pdfBuffer, label = "uploaded.pdf") {
   logger.info({ label, size: pdfBuffer.length }, "Extracting text from PDF");
 
@@ -29,9 +23,7 @@ export async function extractPDFFromBuffer(pdfBuffer, label = "uploaded.pdf") {
   }
 }
 
-/**
- * Normalize PDF text: collapse whitespace, drop page-number noise.
- */
+// Normalize PDF text: collapse whitespace, drop page-number noise.
 function cleanPDFText(text) {
   if (!text) return "";
   return text
@@ -42,9 +34,6 @@ function cleanPDFText(text) {
     .trim();
 }
 
-/**
- * Use the first non-empty line as a title.
- */
 function extractTitleFromPDF(text) {
   if (!text) return "Untitled PDF";
   const lines = text.split("\n").filter((line) => line.trim().length > 0);

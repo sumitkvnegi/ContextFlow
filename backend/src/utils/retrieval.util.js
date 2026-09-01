@@ -153,21 +153,6 @@ export function mmrSelect(queryVector, candidates, k, lambda) {
   return selected;
 }
 
-/**
- * Full re-ranking pipeline applied to scored candidates:
- *   score filter → lexical boost → dedup → per-source cap → (MMR | top-k)
- *
- * @param {number[]} queryVector
- * @param {Array} scored - [{ doc, score, vector }]
- * @param {string} [queryText]
- * @param {object} [options]
- * @param {number} [options.minScore] - Override the similarity threshold. When
- *   the caller has already scoped retrieval to specific documents, pass a low
- *   value so vague queries (e.g. "summarize this") still return chunks.
- * @param {boolean} [options.allowFallback] - When true, if the threshold
- *   rejects everything, keep the best few candidates instead of returning
- *   nothing. Enabled for document-scoped chats.
- */
 export function rerankCandidates(
   queryVector,
   scored,
@@ -181,10 +166,6 @@ export function rerankCandidates(
 
   let candidates = scored.filter((c) => c.score >= minScore);
 
-  // Fallback (scoped chats only): if the threshold rejected everything but we
-  // do have candidates, keep the best few rather than returning nothing. The
-  // user already narrowed retrieval to specific documents, so vague questions
-  // like "summarize this" should still be answerable.
   if (options.allowFallback && candidates.length === 0 && scored.length > 0) {
     candidates = [...scored]
       .sort((a, b) => b.score - a.score)

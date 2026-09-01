@@ -33,7 +33,6 @@ export const chatController = async (req, res) => {
     });
   }
 
-  // `sources` (optional) restricts retrieval to the selected document filenames.
   const filterSources = Array.isArray(sources)
     ? sources.filter((s) => typeof s === "string" && s.trim() !== "")
     : undefined;

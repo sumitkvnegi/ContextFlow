@@ -9,18 +9,12 @@ import { deleteBySource } from "../services/ingestion.service.js";
 import { UPLOAD_CONSTANTS } from "../config/constants.js";
 import logger from "../config/logger.js";
 
-/**
- * GET /api/documents — list all uploaded documents (newest first).
- */
+// GET /api/documents — list all uploaded documents (newest first).
 export const listDocumentsController = async (req, res) => {
   const documents = await listDocuments();
   return res.json({ success: true, documents });
 };
 
-/**
- * GET /api/documents/:id/transcript — download the transcript text file for a
- * media document.
- */
 export const downloadTranscriptController = async (req, res) => {
   const { id } = req.params;
   const doc = await getDocument(id);
@@ -71,7 +65,6 @@ export const deleteDocumentController = async (req, res) => {
     );
   }
 
-  // Best-effort cleanup of the stored transcript file.
   if (removed.transcriptFile) {
     try {
       await fs.unlink(
@@ -81,7 +74,7 @@ export const deleteDocumentController = async (req, res) => {
         ),
       );
     } catch {
-      // already gone — ignore
+      // Ignore errors
     }
   }
 

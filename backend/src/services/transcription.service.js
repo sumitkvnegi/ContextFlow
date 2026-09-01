@@ -22,11 +22,7 @@ const openai =
     ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
     : null;
 
-/**
- * Convert an audio/video file to a mono 16 kHz WAV that Whisper expects.
- * A real (seekable) input file is required because FFmpeg needs to seek
- * within container formats like MP4 to decode them.
- */
+// Convert an audio/video file to a mono 16 kHz WAV that Whisper expects
 function normalizeAudio(inputPath, outputPath) {
   return new Promise((resolve, reject) => {
     ffmpeg(inputPath)
@@ -75,13 +71,6 @@ async function transcribeLocally(audioPath) {
   return transcript;
 }
 
-/**
- * Transcribe an uploaded audio/video buffer into plain text.
- *
- * @param {Buffer} buffer - raw uploaded media bytes
- * @param {string} originalname - original filename (used for extension/temp name)
- * @returns {Promise<string>} - the transcript text
- */
 export async function transcribeMedia(buffer, originalname) {
   const timestamp = Date.now();
   const sanitized = path.parse(originalname).name.replace(/[^a-zA-Z0-9]/g, "_");

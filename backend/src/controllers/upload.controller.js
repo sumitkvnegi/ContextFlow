@@ -13,8 +13,6 @@ export const upload = multer({
 });
 
 /**
- * POST /api/upload  (multipart/form-data, field name: "file")
- * Accepts PDF/TXT/MD or audio/video. Extracts/transcribes text and stores
  * embeddings so the content becomes queryable via chat.
  */
 export const uploadController = async (req, res) => {
